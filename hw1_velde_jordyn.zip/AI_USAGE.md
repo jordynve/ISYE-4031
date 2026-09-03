@@ -41,7 +41,6 @@
   - Reproducibility across runs
   - Hypothesis test calculations
   - Type II error calculations
-- **report.pdf**: Complete written report with plots, statistical summaries, and interpretations
 
 ## Tests Proposed and Run
 
