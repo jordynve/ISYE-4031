@@ -29,7 +29,7 @@
 
 5. **Automated Test Suite**: Created comprehensive test_analysis.py with 12 tests covering data integrity, statistical correctness, and reproducibility requirements specified in Part 4c.
 
-6. **Report Generation**: Produced structured PDF report using fpdf2 library with all required sections and numerical results.
+6. **Report Preparation**: Assisted with organizing and formatting the written report, including its required sections and numerical results.
 
 ## Files Modified or Created
 
@@ -42,7 +42,6 @@
   - Hypothesis test calculations
   - Type II error calculations
 - **report.pdf**: Complete written report with plots, statistical summaries, and interpretations
-- **generate_report_simple.py**: PDF generation utility using fpdf2
 
 ## Tests Proposed and Run
 
