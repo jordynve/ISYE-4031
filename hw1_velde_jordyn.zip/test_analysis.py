@@ -7,6 +7,16 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import pytest
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from part4b import (
+    evaluate_forecast,
+    last_value_baseline,
+    mean_baseline,
+    training_summary,
+)
 
 
 # ============================================================================
@@ -28,19 +38,8 @@ def calculate_mean_ci_and_pi(train_data):
     Calculate 95% CI for mean and 95% PI for single observation.
     Returns (ci_lower, ci_upper, pi_lower, pi_upper)
     """
-    n = len(train_data)
-    mean = np.mean(train_data)
-    std = np.std(train_data, ddof=1)
-    se = std / np.sqrt(n)
-    t_crit = stats.t.ppf(0.975, n - 1)
-    
-    ci_lower = mean - t_crit * se
-    ci_upper = mean + t_crit * se
-    
-    pi_lower = mean - t_crit * std * np.sqrt(1 + 1/n)
-    pi_upper = mean + t_crit * std * np.sqrt(1 + 1/n)
-    
-    return ci_lower, ci_upper, pi_lower, pi_upper
+    summary = training_summary(train_data)
+    return (*summary["ci"], *summary["pi"])
 
 
 def calculate_baselines(train_data, test_length):
@@ -48,9 +47,10 @@ def calculate_baselines(train_data, test_length):
     Calculate mean and last-value baselines.
     Returns (mean_baseline, last_value_baseline)
     """
-    mean_baseline = np.repeat(np.mean(train_data), test_length)
-    last_value_baseline = np.repeat(train_data[-1], test_length)
-    return mean_baseline, last_value_baseline
+    return (
+        mean_baseline(train_data, test_length),
+        last_value_baseline(train_data, test_length),
+    )
 
 
 # ============================================================================

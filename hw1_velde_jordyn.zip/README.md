@@ -14,7 +14,6 @@ The analysis covers:
 
 - `analysis.py` - Main analysis script containing all calculations and plots
 - `test_analysis.py` - Automated test suite (12 tests, all passing)
-- `report.pdf` - Written report (5 pages) answering all questions
 - `AI_USAGE.md` - AI assistance audit trail
 - `README.md` - This file
 - `part1a_plot.png` - Plot of temperatures with training/held-out distinction
@@ -39,8 +38,6 @@ jupyterlab==4.4.3
 ipykernel==6.29.5
 openpyxl==3.1.5
 pytest==8.4.1
-PyPDF2>=1.26.0 (for PDF extraction)
-fpdf2>=2.7.0 (for PDF generation)
 ```
 
 ## Quick Start - Reproducing All Results
@@ -91,19 +88,6 @@ Verify that all 12 tests pass:
 - test_data_length_and_split
 - test_baseline_forecast_lengths
 
-### 3. Verify Report Generation
-
-```bash
-python generate_report_simple.py
-```
-
-**Expected Output**:
-```
-Report generated successfully: report.pdf
-```
-
-This creates `report.pdf` with full written answers to all questions.
-
 ## Key Results Summary
 
 ### Part 1: Descriptive Statistics
@@ -153,10 +137,8 @@ Run any of the above commands multiple times - all outputs will be identical.
 
 ## Detailed Analysis Sections
 
-For detailed explanations and interpretations, see:
-- `report.pdf` - Complete written report (5 pages)
-- Console output from `analysis.py` - Detailed calculations with step-by-step work
-- `test_analysis.py` - Implementation details of statistical verification
+For detailed explanations and interpretations, see the console output from
+`analysis.py` and the implementation details in `test_analysis.py`.
 
 ## Validation Checklist
 
@@ -164,7 +146,6 @@ Before submission, verify:
 
 - [x] analysis.py produces all numerical results
 - [x] pytest -q passes all 12 tests
-- [x] report.pdf exists and is readable (5 pages)
 - [x] No held-out observations used in training
 - [x] Sample std dev uses n-1 denominator
 - [x] Prediction interval is wider than confidence interval
@@ -184,4 +165,3 @@ The analysis is complete and ready for submission. All requirements from the ass
 
 Total: 100 points
 
-All deliverables are included in the submission archive.

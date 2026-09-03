@@ -8,6 +8,12 @@ import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
 import os
+from part4b import (
+    evaluate_forecast,
+    last_value_baseline as make_last_value_baseline,
+    mean_baseline as make_mean_baseline,
+    training_summary,
+)
 
 # ============================================================================
 # DATA: Daily maximum temperatures (in degrees Fahrenheit)
@@ -41,11 +47,12 @@ print("Intended forecast target: Daily maximum temperatures for days 15-20")
 print("\n1c. Descriptive Statistics (Training Set Only):")
 print("-" * 70)
 
-mean_train = np.mean(train)
+train_summary = training_summary(train)
+mean_train = train_summary["mean"]
 median_train = np.median(train)
 range_train = np.max(train) - np.min(train)
-var_train = np.var(train, ddof=1)  # Sample variance uses n-1
-std_train = np.std(train, ddof=1)  # Sample standard deviation uses n-1
+var_train = train_summary["variance"]
+std_train = train_summary["std"]
 q1_train = np.percentile(train, 25)
 q3_train = np.percentile(train, 75)
 iqr_train = q3_train - q1_train
@@ -67,8 +74,7 @@ se = std_train / np.sqrt(n)
 df = n - 1
 t_crit = stats.t.ppf(0.975, df)  # Two-tailed, 0.975 for 0.05/2
 
-ci_lower = mean_train - t_crit * se
-ci_upper = mean_train + t_crit * se
+ci_lower, ci_upper = train_summary["ci"]
 
 print(f"Formula: x̄ ± t_(α/2, n-1) * (s / √n)")
 print(f"  x̄ = {mean_train:.4f}")
@@ -89,8 +95,7 @@ print("-" * 70)
 
 # Prediction interval uses different formula: x̄ ± t * s * √(1 + 1/n)
 pred_se = std_train * np.sqrt(1 + 1/n)
-pred_lower = mean_train - t_crit * pred_se
-pred_upper = mean_train + t_crit * pred_se
+pred_lower, pred_upper = train_summary["pi"]
 
 print(f"Formula: x̄ ± t_(α/2, n-1) * s * √(1 + 1/n)")
 print(f"  x̄ = {mean_train:.4f}")
@@ -166,10 +171,10 @@ print("\n2a. Forecast Baselines:")
 print("-" * 70)
 
 # Mean baseline: Use training mean for all forecasts
-mean_baseline = np.repeat(mean_train, len(test))
+mean_baseline = make_mean_baseline(train, len(test))
 
 # Last-value baseline: Use final training observation for all forecasts
-last_value_baseline = np.repeat(train[-1], len(test))
+last_value_baseline = make_last_value_baseline(train, len(test))
 
 print(f"\nMean Baseline (using training mean = {mean_train:.4f}):")
 for i, forecast in enumerate(mean_baseline):
@@ -190,12 +195,14 @@ print("\n2b. Forecast Evaluation Metrics:")
 print("-" * 70)
 
 # Mean Absolute Error
-mae_mean = np.mean(np.abs(mean_baseline - test))
-mae_last = np.mean(np.abs(last_value_baseline - test))
+mean_metrics = evaluate_forecast(mean_baseline, test)
+last_metrics = evaluate_forecast(last_value_baseline, test)
+mae_mean = mean_metrics["mae"]
+mae_last = last_metrics["mae"]
 
 # Root Mean Squared Error
-rmse_mean = np.sqrt(np.mean((mean_baseline - test)**2))
-rmse_last = np.sqrt(np.mean((last_value_baseline - test)**2))
+rmse_mean = mean_metrics["rmse"]
+rmse_last = last_metrics["rmse"]
 
 print(f"\nMean Baseline:")
 print(f"  Forecast errors:  {mean_baseline - test}")
@@ -409,8 +416,7 @@ print("\n" + "="*70)
 print("PART 4: AUDIT AN AGENT-GENERATED ANALYSIS")
 print("="*70)
 
-print("\nPart 4 (audit of agent code and corrected implementation) is handled")
-print("in test_analysis.py and fully discussed in the report.")
+print("\nPart 4 audit and corrected implementation are covered by test_analysis.py.")
 
 # ============================================================================
 # SAVE OUTPUT SUMMARY
