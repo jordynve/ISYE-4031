@@ -15,37 +15,37 @@ warnings.filterwarnings('ignore')
 class PDF(FPDF):
     def __init__(self):
         super().__init__()
-        self.set_margins(13, 16, 13)  # left, top, right margins
+        self.set_margins(12, 14, 12)  # left, top, right margins - more compact
         
     def header(self):
-        self.set_font("Helvetica", "B", 16)
-        self.cell(0, 8, "ISYE 4031: Regression and Forecasting", 0, 1, "C")
-        self.set_font("Helvetica", "B", 14)
-        self.cell(0, 7, "Homework 1 Report", 0, 1, "C")
-        self.ln(4)
+        self.set_font("Helvetica", "B", 15)
+        self.cell(0, 6, "ISYE 4031: Regression and Forecasting", 0, 1, "C")
+        self.set_font("Helvetica", "B", 12)
+        self.cell(0, 5, "Homework 1 Report", 0, 1, "C")
+        self.ln(2)
         
     def footer(self):
-        self.set_y(-12)
+        self.set_y(-10)
         self.set_font("Helvetica", "I", 8)
         self.cell(0, 10, f"Page {self.page_no()}", 0, 0, "C")
         
     def section_title(self, title):
-        self.set_font("Helvetica", "B", 12)
+        self.set_font("Helvetica", "B", 11)
         self.set_fill_color(200, 220, 255)
-        self.cell(0, 8, title, 0, 1, "L", True)
-        self.ln(3)
+        self.cell(0, 7, title, 0, 1, "L", True)
+        self.ln(2)
         
     def subsection_title(self, title):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(0, 0, 100)
-        self.cell(0, 6, title, 0, 1)
+        self.cell(0, 5, title, 0, 1)
         self.set_text_color(0, 0, 0)
-        self.ln(1)
+        self.ln(0.5)
         
     def body_text(self, text):
         self.set_font("Helvetica", "", 9)
-        self.multi_cell(0, 5, text)
-        self.ln(1)
+        self.multi_cell(0, 4, text)
+        self.ln(0.5)
 
 
 pdf = PDF()
