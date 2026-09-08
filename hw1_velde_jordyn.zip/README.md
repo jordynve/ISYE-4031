@@ -17,8 +17,6 @@ The analysis covers:
 - `report.pdf` - Written homework report
 - `AI_USAGE.md` - AI assistance audit trail
 - `README.md` - This file
-- `part1a_plot.png` - Plot of temperatures with training/held-out distinction
-- `part2a_plot.png` - Plot of forecast baselines
 
 ## Required Environment
 
