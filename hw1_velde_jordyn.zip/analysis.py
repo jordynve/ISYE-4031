@@ -8,12 +8,57 @@ import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
 import os
-from part4b import (
-    evaluate_forecast,
-    last_value_baseline as make_last_value_baseline,
-    mean_baseline as make_mean_baseline,
-    training_summary,
-)
+
+
+def training_summary(train_data, confidence=0.95):
+    """Return training-only summary statistics and intervals."""
+    train = np.asarray(train_data, dtype=float)
+    if train.ndim != 1 or train.size < 2:
+        raise ValueError("train_data must be a one-dimensional array with at least two values")
+    if not 0 < confidence < 1:
+        raise ValueError("confidence must be between 0 and 1")
+
+    n = train.size
+    mean = np.mean(train)
+    std = np.std(train, ddof=1)
+    t_critical = stats.t.ppf(1 - (1 - confidence) / 2, n - 1)
+    ci_margin = t_critical * std / np.sqrt(n)
+    pi_margin = t_critical * std * np.sqrt(1 + 1 / n)
+
+    return {
+        "n": n,
+        "mean": mean,
+        "std": std,
+        "variance": np.var(train, ddof=1),
+        "ci": (mean - ci_margin, mean + ci_margin),
+        "pi": (mean - pi_margin, mean + pi_margin),
+    }
+
+
+def mean_baseline(train_data, forecast_horizon):
+    """Forecast the training mean at every future time point."""
+    train = np.asarray(train_data, dtype=float)
+    return np.repeat(np.mean(train), forecast_horizon)
+
+
+def last_value_baseline(train_data, forecast_horizon):
+    """Forecast the last observed training value at every future time point."""
+    train = np.asarray(train_data, dtype=float)
+    return np.repeat(train[-1], forecast_horizon)
+
+
+def evaluate_forecast(forecast, observed):
+    """Evaluate a fixed forecast against held-out observations."""
+    forecast = np.asarray(forecast, dtype=float)
+    observed = np.asarray(observed, dtype=float)
+    if forecast.shape != observed.shape:
+        raise ValueError("forecast and observed must have the same shape")
+    errors = forecast - observed
+    return {
+        "mae": np.mean(np.abs(errors)),
+        "rmse": np.sqrt(np.mean(errors**2)),
+    }
+
 
 # ============================================================================
 # DATA: Daily maximum temperatures (in degrees Fahrenheit)
@@ -171,17 +216,17 @@ print("\n2a. Forecast Baselines:")
 print("-" * 70)
 
 # Mean baseline: Use training mean for all forecasts
-mean_baseline = make_mean_baseline(train, len(test))
+mean_baseline_forecast = mean_baseline(train, len(test))
 
 # Last-value baseline: Use final training observation for all forecasts
-last_value_baseline = make_last_value_baseline(train, len(test))
+last_value_baseline_forecast = last_value_baseline(train, len(test))
 
 print(f"\nMean Baseline (using training mean = {mean_train:.4f}):")
-for i, forecast in enumerate(mean_baseline):
+for i, forecast in enumerate(mean_baseline_forecast):
     print(f"  Day {14+i+1}: {forecast:.4f}°F")
 
 print(f"\nLast-Value Baseline (using final training value = {train[-1]:.4f}):")
-for i, forecast in enumerate(last_value_baseline):
+for i, forecast in enumerate(last_value_baseline_forecast):
     print(f"  Day {14+i+1}: {forecast:.4f}°F")
 
 print("\nWhy forecasts don't change after held-out period begins:")
@@ -195,8 +240,8 @@ print("\n2b. Forecast Evaluation Metrics:")
 print("-" * 70)
 
 # Mean Absolute Error
-mean_metrics = evaluate_forecast(mean_baseline, test)
-last_metrics = evaluate_forecast(last_value_baseline, test)
+mean_metrics = evaluate_forecast(mean_baseline_forecast, test)
+last_metrics = evaluate_forecast(last_value_baseline_forecast, test)
 mae_mean = mean_metrics["mae"]
 mae_last = last_metrics["mae"]
 
@@ -205,17 +250,17 @@ rmse_mean = mean_metrics["rmse"]
 rmse_last = last_metrics["rmse"]
 
 print(f"\nMean Baseline:")
-print(f"  Forecast errors:  {mean_baseline - test}")
-print(f"  Absolute errors:  {np.abs(mean_baseline - test)}")
+print(f"  Forecast errors:  {mean_baseline_forecast - test}")
+print(f"  Absolute errors:  {np.abs(mean_baseline_forecast - test)}")
 print(f"  MAE = {mae_mean:.4f}°F")
-print(f"  MSE = {np.mean((mean_baseline - test)**2):.4f}")
+print(f"  MSE = {np.mean((mean_baseline_forecast - test)**2):.4f}")
 print(f"  RMSE = {rmse_mean:.4f}°F")
 
 print(f"\nLast-Value Baseline:")
-print(f"  Forecast errors:  {last_value_baseline - test}")
-print(f"  Absolute errors:  {np.abs(last_value_baseline - test)}")
+print(f"  Forecast errors:  {last_value_baseline_forecast - test}")
+print(f"  Absolute errors:  {np.abs(last_value_baseline_forecast - test)}")
 print(f"  MAE = {mae_last:.4f}°F")
-print(f"  MSE = {np.mean((last_value_baseline - test)**2):.4f}")
+print(f"  MSE = {np.mean((last_value_baseline_forecast - test)**2):.4f}")
 print(f"  RMSE = {rmse_last:.4f}°F")
 
 print(f"\nBetter Baseline Under Each Metric:")
@@ -241,11 +286,11 @@ print("-" * 70)
 if rmse_mean < rmse_last:
     chosen = "Mean baseline"
     chosen_var = "mean_baseline"
-    chosen_forecasts = mean_baseline
+    chosen_forecasts = mean_baseline_forecast
 else:
     chosen = "Last-value baseline"
     chosen_var = "last_value_baseline"
-    chosen_forecasts = last_value_baseline
+    chosen_forecasts = last_value_baseline_forecast
 
 print(f"Recommended benchmark: {chosen}")
 print(f"\nJustification:")
@@ -271,9 +316,9 @@ plt.plot(days[14:], temps[14:], 's-', color='red', label='Held-out (days 15-20)'
          linewidth=2, markersize=8)
 
 # Plot baselines (only for held-out period)
-plt.plot(days[14:], mean_baseline, '^--', color='blue', label='Mean baseline',
+plt.plot(days[14:], mean_baseline_forecast, '^--', color='blue', label='Mean baseline',
          linewidth=2, markersize=8, alpha=0.7)
-plt.plot(days[14:], last_value_baseline, 'D--', color='orange', label='Last-value baseline',
+plt.plot(days[14:], last_value_baseline_forecast, 'D--', color='orange', label='Last-value baseline',
          linewidth=2, markersize=8, alpha=0.7)
 
 # Mark cutoff
@@ -415,8 +460,22 @@ print(f"  beta = {beta:.6f} (calculated: {beta:.6f}) ✓")
 print("\n" + "="*70)
 print("PART 4: AUDIT AN AGENT-GENERATED ANALYSIS")
 print("="*70)
-
-print("\nPart 4 audit and corrected implementation are covered by test_analysis.py.")
+print("\n4a. Five distinct problems in the proposed code:")
+print("-" * 70)
+print("1. Using ddof=0 instead of ddof=1 for the sample standard deviation and variance.")
+print("   Consequence: the code underestimates uncertainty because sample variance should use n-1.")
+print("2. Using the full 20-point series instead of only the 14 training values when computing mean/std/intervals.")
+print("   Consequence: held-out values leak into the training summary and the uncertainty intervals are biased.")
+print("3. Computing the prediction interval with the same formula as the confidence interval instead of")
+print("   x̄ ± t * s * sqrt(1 + 1/n).")
+print("   Consequence: the PI is too narrow because it ignores the extra variance of a new observation.")
+print("4. Using the wrong distribution (normal instead of t) for small-sample inference.")
+print("   Consequence: the critical value is too small for n=14 and the interval is not appropriate for the sample size.")
+print("5. Using the final held-out value in the last-value baseline rather than the last training value.")
+print("   Consequence: the baseline forecast includes future information and is not a valid out-of-sample forecast.")
+print("\n4b. Corrected implementation: the required functions are embedded in this analysis.py file, and")
+print("the same corrected logic is validated in test_analysis.py. The implementation uses only training data,")
+print("uses ddof=1 for sample statistics, and keeps the mean and last-value baselines separate.")
 
 # ============================================================================
 # SAVE OUTPUT SUMMARY

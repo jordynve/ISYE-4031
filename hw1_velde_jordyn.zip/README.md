@@ -14,6 +14,7 @@ The analysis covers:
 
 - `analysis.py` - Main analysis script containing all calculations and plots
 - `test_analysis.py` - Automated test suite (12 tests, all passing)
+- `report.pdf` - Written homework report
 - `AI_USAGE.md` - AI assistance audit trail
 - `README.md` - This file
 - `part1a_plot.png` - Plot of temperatures with training/held-out distinction
@@ -45,7 +46,7 @@ pytest==8.4.1
 ### 1. Run the Analysis
 
 ```bash
-python analysis.py
+python3 analysis.py
 ```
 
 This generates:
@@ -65,7 +66,7 @@ This generates:
 ### 2. Run All Tests
 
 ```bash
-pytest -q
+python3 -m pytest -q
 ```
 
 **Expected Output**:
@@ -109,7 +110,7 @@ Verify that all 12 tests pass:
 
 ### Part 4: Code Audit
 - Identified 5 distinct problems in proposed code
-- All corrected in analysis.py
+- All corrected in analysis.py and test_analysis.py
 - 12 automated tests verify correct implementation
 
 ## Data Integrity Guarantees
@@ -138,7 +139,7 @@ Run any of the above commands multiple times - all outputs will be identical.
 ## Detailed Analysis Sections
 
 For detailed explanations and interpretations, see the console output from
-`analysis.py` and the implementation details in `test_analysis.py`.
+`analysis.py`, `test_analysis.py`, and the written report.
 
 ## Validation Checklist
 
@@ -163,5 +164,5 @@ The analysis is complete and ready for submission. All requirements from the ass
 4. ✓ Agent audit and automated tests (Part 4, 24 points)
 5. ✓ AI Usage Statement (5 points)
 
-Total: 100 points
+Total: 100 points according to the assignment rubric.
 

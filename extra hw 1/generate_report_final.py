@@ -67,6 +67,11 @@ if os.path.exists("part1a_plot.png"):
     try:
         pdf.image("part1a_plot.png", x=12, w=187)
         pdf.ln(1)
+        pdf.set_font("Helvetica", "I", 8)
+        pdf.multi_cell(0, 4,
+            "Caption: Temperatures through day 14 are the training observations available when "
+            "forecasts are issued, while days 15-20 are held out for evaluating forecast "
+            "performance and cannot be used to fit the baselines.")
     except Exception as e:
         print(f"Warning: Could not embed plot: {e}")
 

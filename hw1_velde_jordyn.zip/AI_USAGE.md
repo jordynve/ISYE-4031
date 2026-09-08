@@ -25,15 +25,15 @@
 
 3. **Part 3 Hypothesis Testing**: Coded one-sample hypothesis test, p-value calculation, and Type II error probability with verification against manual calculations.
 
-4. **Code Audit Implementation**: Generated the analysis.py module that correctly implements all Part 1 and Part 2 calculations, avoiding the identified statistical errors.
+4. **Code Audit Implementation**: Assisted with revising analysis.py and test_analysis.py to implement the corrected training-only calculations, forecast baselines, statistical audit, and reproducibility checks.
 
 5. **Automated Test Suite**: Created comprehensive test_analysis.py with 12 tests covering data integrity, statistical correctness, and reproducibility requirements specified in Part 4c.
 
-6. **Report Preparation**: Assisted with organizing and formatting the written report, including its required sections and numerical results.
+6. **Report Review**: Reviewed the required sections and numerical results for consistency with the verified analysis; the written report was prepared separately.
 
 ## Files Modified or Created
 
-- **analysis.py**: Complete implementation of Parts 1-3 with detailed calculations, plotting, and output formatting
+- **analysis.py**: Complete implementation of Parts 1-4, including statistical calculations, forecast baselines, audit discussion, plotting, and output formatting
 - **test_analysis.py**: 12 automated tests verifying all requirements including:
   - Data integrity (held-out values don't affect training)
   - n-1 denominator in sample variance
